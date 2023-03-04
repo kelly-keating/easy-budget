@@ -1,0 +1,12 @@
+.breakdown__container {
+  display: flex;
+  justify-content: center;
+}
+
+.breakdown__all {
+  width: 60vw;
+}
+
+.breakdown__details {
+  width: 35vw;
+}

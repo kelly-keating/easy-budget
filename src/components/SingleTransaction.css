@@ -1,0 +1,19 @@
+.single__container {
+  display: flex;
+}
+
+.single__date {
+  width: 90px;
+  text-align: center;
+}
+
+.single__text {
+  padding: 0 10px;
+  width: calc(100% - 90px - 80px - 80px);
+}
+
+.single__amt_in,
+.single__amt_out {
+  width: 80px;
+  text-align: center;
+}
