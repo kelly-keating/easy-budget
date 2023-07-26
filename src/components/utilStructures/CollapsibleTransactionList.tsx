@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Transaction } from '../utils/types'
+import { Transaction } from '../../utils/types'
 import './CollapsibleTransactionList.css'
 
 import SingleTransaction from './SingleTransaction'

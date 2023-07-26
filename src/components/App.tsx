@@ -2,13 +2,19 @@ import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import './App.css'
 
 import Breakdown from './Breakdown'
-import Input from './Input'
+import Input from './fileInput/Input'
 import Summary from './Summary'
+import Filters from './Filters'
 
 function App() {
   const { pathname } = useLocation()
 
   const pageIs = (path: string) => pathname === path
+  const link = (path: string, text: string) => (
+    <Link className={pageIs(path) ? 'nav-link-on-page' : 'nav-link'} to={path}>
+      {text}
+    </Link>
+  )
 
   return (
     <div className="App">
@@ -17,28 +23,15 @@ function App() {
       </header>
       <section>
         <nav>
-          <Link
-            className={pageIs('/') ? 'nav-link-on-page' : 'nav-link'}
-            to="/"
-          >
-            Overview
-          </Link>
-          <Link
-            className={pageIs('/breakdown') ? 'nav-link-on-page' : 'nav-link'}
-            to="/breakdown"
-          >
-            Details
-          </Link>
-          <Link
-            className={pageIs('/add') ? 'nav-link-on-page' : 'nav-link'}
-            to="/add"
-          >
-            Add new
-          </Link>
+          {link('/', 'Overview')}
+          {link('/breakdown', 'Details')}
+          {link('/filters', 'Filters')}
+          {link('/add', 'Add new')}
         </nav>
         <Routes>
           <Route path="/" element={<Summary />} />
           <Route path="/breakdown" element={<Breakdown />} />
+          <Route path="/filters" element={<Filters />} />
           <Route path="/add" element={<Input />} />
         </Routes>
       </section>

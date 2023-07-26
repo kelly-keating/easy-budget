@@ -1,4 +1,4 @@
-import { TransactionList } from './types'
+import { Filter, TransactionList } from './types'
 
 export function setLocalTransactions(t: TransactionList) {
   localStorage.setItem('easyBudgetTransactions', JSON.stringify(t))
@@ -9,7 +9,7 @@ export function getLocalTransactions(): TransactionList {
   return t ? JSON.parse(t) : {}
 }
 
-export function addNewFilter(newFilter: string) {
+export function addNewFilter(newFilter: Filter) {
   const f = localStorage.getItem('easyBudgetFilters')
   const filters = f ? JSON.parse(f) : []
   filters.push(newFilter)
@@ -17,7 +17,7 @@ export function addNewFilter(newFilter: string) {
   localStorage.setItem('easyBudgetFilters', JSON.stringify(filters))
 }
 
-export function getFilters(): string[] {
+export function getFilters(): Filter[] {
   const f = localStorage.getItem('easyBudgetFilters')
   return f ? JSON.parse(f) : []
 }

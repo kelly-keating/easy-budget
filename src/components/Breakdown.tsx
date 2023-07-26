@@ -2,7 +2,7 @@ import { getLocalTransactions } from '../utils/localStorage'
 import { Transaction } from '../utils/types'
 import './Breakdown.css'
 
-import CollapsibleTransactionList from './CollapsibleTransactionList'
+import CollapsibleTransactionList from './utilStructures/CollapsibleTransactionList'
 
 function Breakdown() {
   const transactions = getLocalTransactions()

@@ -1,25 +1,27 @@
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
 import {
   setLocalTransactions,
   getFilters,
   addNewFilter,
   getLocalTransactions,
-} from '../utils/localStorage'
-import { Transaction } from '../utils/types'
+} from '../../utils/localStorage'
+import { Transaction } from '../../utils/types'
 import './Input.css'
 
-import CollapsibleTransactionList from './CollapsibleTransactionList'
-import SingleTransaction from './SingleTransaction'
+import CollapsibleTransactionList from '../utilStructures/CollapsibleTransactionList'
+import SingleTransaction from '../utilStructures/SingleTransaction'
+import FileLoader from './FileLoader'
 
 function Input() {
   const [holdingPen, setHoldingPen] = useState<Transaction[]>([])
   const [newFilter, setNewFilter] = useState('')
+  const [account, setAccount] = useState('')
 
   const filters = getFilters()
 
   const addFilter = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    addNewFilter(newFilter)
+    // addNewFilter(newFilter)
     setNewFilter('')
   }
 
@@ -30,6 +32,9 @@ function Input() {
     const savedTransactions = getLocalTransactions()
 
     const transactionObj = ts.reduce((obj, next) => {
+      next.Account = account
+      next.Direction = next.Amount > 0 ? 'in' : 'out'
+
       if (obj[next.Date]) {
         obj[next.Date].push(next)
       } else {
@@ -37,70 +42,10 @@ function Input() {
       }
       return obj
     }, savedTransactions)
+
     setLocalTransactions(transactionObj)
     setHoldingPen([])
-  }
-
-  const handleAdd = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const file = (e.currentTarget.elements.namedItem('csv') as HTMLInputElement)
-      .files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const csv = e.target?.result
-        if (csv) {
-          let lines = csv
-            .toString()
-            .replaceAll('\r', '')
-            .replaceAll('"', '')
-            .split('\n')
-          if (lines[lines.length - 1] === '') lines.pop()
-          const headers = lines[0].split(',')
-          const data: Transaction[] = lines.slice(1).map((line) => {
-            const values = line.split(',')
-            const transactionObj = headers.reduce(
-              (obj: Partial<Transaction>, nextKey, index) => {
-                switch (nextKey) {
-                  case 'Amount':
-                    obj[nextKey] = Number(values[index])
-                    break
-                  case 'Analysis Code':
-                    obj['AnalysisCode'] = values[index]
-                    break
-                  case 'Transaction Date':
-                    obj['Date'] = values[index]
-                    break
-                  case 'Other Party':
-                    obj['OtherParty'] = values[index]
-                    break
-                  case 'Date':
-                  case 'Description':
-                  case 'Particulars':
-                  case 'Reference':
-                    obj[nextKey] = values[index]
-                    break
-                  case 'City':
-                  case 'Country Code':
-                  case 'Credit Plan Name':
-                  case 'Foreign Details':
-                  case 'Process Date':
-                    break
-                  default:
-                    console.log('Unknown key', nextKey, values[index])
-                    break
-                }
-                return obj
-              },
-              {},
-            )
-            return transactionObj as Transaction
-          })
-          setHoldingPen(data)
-        }
-      }
-      reader.readAsText(file) // loads and reads the file
-    }
+    setAccount('')
   }
 
   const { pending, filteredOut } = holdingPen.reduce(
@@ -139,17 +84,30 @@ function Input() {
 
   return (
     <section>
-      <div>
-        <h2>Input</h2>
-        <form onSubmit={handleAdd}>
-          <label htmlFor="csv">CSV file:</label>
-          <input id="csv" type="file" />
-          <button>Parse file</button>
-        </form>
-      </div>
+      <FileLoader setTransactions={(t: Transaction[]) => setHoldingPen(t)} />
       <div className="new-transactions">
         <section>
           <h2>Transactions ({pending.length})</h2>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <label htmlFor="account">Account:</label>
+            <select
+              id="account"
+              onChange={(e) => setAccount(e.target.value)}
+              value="General"
+            >
+              <option selected disabled hidden value="">
+                Select account
+              </option>
+              <option value="General">General</option>
+              <option value="Savings">Savings</option>
+              <option value="Super Savings">Super Savings</option>
+              <option value="Health and Fitness">Health and Fitness</option>
+              <option value="Tech Allowance">Tech Allowance</option>
+              <option value="Treat Yo Self">Treat Yo Self</option>
+              <option value="No Touch">No Touch</option>
+              <option value="Credit Card">Credit Card</option>
+            </select>
+          </form>
           <button onClick={() => handleSaveTransactions(pending)}>
             Save these transactions
           </button>
@@ -165,7 +123,7 @@ function Input() {
             })}
           </div>
         </section>
-        <section>
+        {/* <section>
           <h2>Filters</h2>
           <div>
             <h3>Add new filter</h3>
@@ -194,7 +152,7 @@ function Input() {
               />
             ))}
           </div>
-        </section>
+        </section> */}
       </div>
     </section>
   )

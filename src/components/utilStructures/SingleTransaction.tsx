@@ -1,4 +1,4 @@
-import { Transaction } from '../utils/types'
+import { Transaction } from '../../utils/types'
 import './SingleTransaction.css'
 
 interface Props {

@@ -6,6 +6,14 @@ export interface Transaction {
   AnalysisCode?: string
   Particulars?: string
   Reference?: string
+  Account?: string
+  Direction?: string
+  Label?: string
 }
 
 export type TransactionList = Record<string, Transaction[]>
+
+export interface Filter {
+  text: string
+  label: string
+}
